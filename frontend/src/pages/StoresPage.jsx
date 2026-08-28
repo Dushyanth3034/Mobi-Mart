@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { storesApi } from '../services/api';
-import { formatRupee, formatPercent, formatNumber } from '../utils/currency';
+import { formatRupee, formatRupeeCompact, formatPercent, formatNumber } from '../utils/currency';
 import { Badge } from '../components/Badge';
 import { Modal } from '../components/Modal';
 import {
