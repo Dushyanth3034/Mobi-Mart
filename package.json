@@ -1,0 +1,29 @@
+{
+  "name": "mobimart",
+  "version": "1.0.0",
+  "description": "MobiMart - Mobile Retail Chain Inventory Optimization and EOL Risk Management System",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "seed": "cd backend && npm run seed",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "keywords": [
+    "inventory-optimization",
+    "retail",
+    "allocation-engine",
+    "eol-risk",
+    "sequelize",
+    "react",
+    "express"
+  ],
+  "author": "MobiMart Team",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

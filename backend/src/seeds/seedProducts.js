@@ -1,0 +1,872 @@
+const { Product } = require('../models');
+
+const productsData = [
+  // 1-8: Apple
+  {
+    sku: 'APL-IP15PM-256',
+    brand: 'Apple',
+    model_name: 'iPhone 15 Pro Max 256GB',
+    category: 'Flagship',
+    price: 149900.00,
+    cost_price: 127415.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 95.0,
+    image_url: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300'
+  },
+  {
+    sku: 'APL-IP15P-128',
+    brand: 'Apple',
+    model_name: 'iPhone 15 Pro 128GB',
+    category: 'Flagship',
+    price: 134900.00,
+    cost_price: 114665.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 92.0,
+    image_url: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300'
+  },
+  {
+    sku: 'APL-IP15PLS-128',
+    brand: 'Apple',
+    model_name: 'iPhone 15 Plus 128GB',
+    category: 'Premium',
+    price: 89900.00,
+    cost_price: 76415.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 84.0,
+    image_url: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=300'
+  },
+  {
+    sku: 'APL-IP15-128',
+    brand: 'Apple',
+    model_name: 'iPhone 15 128GB',
+    category: 'Premium',
+    price: 79900.00,
+    cost_price: 67915.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 94.0,
+    image_url: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=300'
+  },
+  {
+    sku: 'APL-IP14PLS-128',
+    brand: 'Apple',
+    model_name: 'iPhone 14 Plus 128GB',
+    category: 'Premium',
+    price: 72900.00,
+    cost_price: 62000.00,
+    margin_percentage: 14.95,
+    markdown_percentage: 5.0,
+    base_demand_score: 65.0,
+    image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300'
+  },
+  {
+    sku: 'APL-IP14-128',
+    brand: 'Apple',
+    model_name: 'iPhone 14 128GB',
+    category: 'Premium',
+    price: 62900.00,
+    cost_price: 53500.00,
+    margin_percentage: 14.94,
+    markdown_percentage: 0.0,
+    base_demand_score: 86.0,
+    image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300'
+  },
+  {
+    sku: 'APL-IP13-128',
+    brand: 'Apple',
+    model_name: 'iPhone 13 128GB',
+    category: 'Premium',
+    price: 52900.00,
+    cost_price: 45000.00,
+    margin_percentage: 14.93,
+    markdown_percentage: 8.0,
+    base_demand_score: 75.0,
+    image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300'
+  },
+  {
+    sku: 'APL-IP12-64',
+    brand: 'Apple',
+    model_name: 'iPhone 12 64GB',
+    category: 'Premium',
+    price: 44900.00,
+    cost_price: 38000.00,
+    margin_percentage: 15.37,
+    markdown_percentage: 18.0,
+    base_demand_score: 45.0,
+    image_url: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300'
+  },
+
+  // 9-23: Samsung
+  {
+    sku: 'SAM-S24U-256',
+    brand: 'Samsung',
+    model_name: 'Galaxy S24 Ultra 5G 256GB',
+    category: 'Flagship',
+    price: 129999.00,
+    cost_price: 109199.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 93.0,
+    image_url: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=300'
+  },
+  {
+    sku: 'SAM-S24P-256',
+    brand: 'Samsung',
+    model_name: 'Galaxy S24 Plus 5G 256GB',
+    category: 'Flagship',
+    price: 99999.00,
+    cost_price: 83999.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 82.0,
+    image_url: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=300'
+  },
+  {
+    sku: 'SAM-S24-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy S24 5G 128GB',
+    category: 'Flagship',
+    price: 79999.00,
+    cost_price: 67199.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 88.0,
+    image_url: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=300'
+  },
+  {
+    sku: 'SAM-S23U-256',
+    brand: 'Samsung',
+    model_name: 'Galaxy S23 Ultra 5G 256GB',
+    category: 'Flagship',
+    price: 94999.00,
+    cost_price: 79799.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 15.0,
+    base_demand_score: 62.0,
+    image_url: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=300'
+  },
+  {
+    sku: 'SAM-S23FE-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy S23 FE 5G 128GB',
+    category: 'Premium',
+    price: 49999.00,
+    cost_price: 42499.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 78.0,
+    image_url: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=300'
+  },
+  {
+    sku: 'SAM-S23-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy S23 5G 128GB',
+    category: 'Premium',
+    price: 54999.00,
+    cost_price: 46749.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 12.0,
+    base_demand_score: 55.0,
+    image_url: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=300'
+  },
+  {
+    sku: 'SAM-ZFOLD5-256',
+    brand: 'Samsung',
+    model_name: 'Galaxy Z Fold 5 256GB',
+    category: 'Flagship',
+    price: 154999.00,
+    cost_price: 128649.00,
+    margin_percentage: 17.0,
+    markdown_percentage: 5.0,
+    base_demand_score: 60.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'SAM-ZFLIP5-256',
+    brand: 'Samsung',
+    model_name: 'Galaxy Z Flip 5 256GB',
+    category: 'Flagship',
+    price: 99999.00,
+    cost_price: 83999.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 5.0,
+    base_demand_score: 70.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'SAM-A55-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy A55 5G 128GB',
+    category: 'Mid-range',
+    price: 39999.00,
+    cost_price: 33999.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 82.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'SAM-A35-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy A35 5G 128GB',
+    category: 'Mid-range',
+    price: 30999.00,
+    cost_price: 26349.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 80.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'SAM-A25-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy A25 5G 128GB',
+    category: 'Mid-range',
+    price: 23999.00,
+    cost_price: 20399.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 76.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'SAM-A15-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy A15 5G 128GB',
+    category: 'Budget',
+    price: 17999.00,
+    cost_price: 15299.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 90.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'SAM-M34-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy M34 5G 128GB',
+    category: 'Budget',
+    price: 15999.00,
+    cost_price: 13599.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 10.0,
+    base_demand_score: 70.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'SAM-M14-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy M14 5G 128GB',
+    category: 'Budget',
+    price: 12499.00,
+    cost_price: 10624.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 12.0,
+    base_demand_score: 68.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'SAM-F14-128',
+    brand: 'Samsung',
+    model_name: 'Galaxy F14 5G 128GB',
+    category: 'Budget',
+    price: 10999.00,
+    cost_price: 9349.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 75.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+
+  // 24-31: OnePlus
+  {
+    sku: 'OP-12-256',
+    brand: 'OnePlus',
+    model_name: 'OnePlus 12 5G 256GB',
+    category: 'Flagship',
+    price: 64999.00,
+    cost_price: 55249.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 91.0,
+    image_url: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300'
+  },
+  {
+    sku: 'OP-12R-256',
+    brand: 'OnePlus',
+    model_name: 'OnePlus 12R 5G 256GB',
+    category: 'Premium',
+    price: 39999.00,
+    cost_price: 33999.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 92.0,
+    image_url: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300'
+  },
+  {
+    sku: 'OP-11-256',
+    brand: 'OnePlus',
+    model_name: 'OnePlus 11 5G 256GB',
+    category: 'Premium',
+    price: 46999.00,
+    cost_price: 39949.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 15.0,
+    base_demand_score: 58.0,
+    image_url: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300'
+  },
+  {
+    sku: 'OP-11R-128',
+    brand: 'OnePlus',
+    model_name: 'OnePlus 11R 5G 128GB',
+    category: 'Mid-range',
+    price: 32999.00,
+    cost_price: 28049.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 18.0,
+    base_demand_score: 50.0,
+    image_url: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300'
+  },
+  {
+    sku: 'OP-NORD4-256',
+    brand: 'OnePlus',
+    model_name: 'OnePlus Nord 4 5G 256GB',
+    category: 'Mid-range',
+    price: 29999.00,
+    cost_price: 25499.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 88.0,
+    image_url: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300'
+  },
+  {
+    sku: 'OP-NORDCE4-128',
+    brand: 'OnePlus',
+    model_name: 'OnePlus Nord CE4 5G 128GB',
+    category: 'Mid-range',
+    price: 24999.00,
+    cost_price: 21249.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 89.0,
+    image_url: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300'
+  },
+  {
+    sku: 'OP-NORDCE4L-128',
+    brand: 'OnePlus',
+    model_name: 'OnePlus Nord CE4 Lite 128GB',
+    category: 'Budget',
+    price: 19999.00,
+    cost_price: 16999.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 85.0,
+    image_url: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300'
+  },
+  {
+    sku: 'OP-NORDCE3L-128',
+    brand: 'OnePlus',
+    model_name: 'OnePlus Nord CE3 Lite 128GB',
+    category: 'Budget',
+    price: 16999.00,
+    cost_price: 14449.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 12.0,
+    base_demand_score: 60.0,
+    image_url: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=300'
+  },
+
+  // 32-41: Xiaomi & Redmi
+  {
+    sku: 'MI-14U-512',
+    brand: 'Xiaomi',
+    model_name: 'Xiaomi 14 Ultra 512GB',
+    category: 'Flagship',
+    price: 99999.00,
+    cost_price: 83999.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 78.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'MI-14-512',
+    brand: 'Xiaomi',
+    model_name: 'Xiaomi 14 5G 512GB',
+    category: 'Flagship',
+    price: 69999.00,
+    cost_price: 58799.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 80.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'MI-13P-256',
+    brand: 'Xiaomi',
+    model_name: 'Xiaomi 13 Pro 256GB',
+    category: 'Premium',
+    price: 59999.00,
+    cost_price: 50399.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 22.0,
+    base_demand_score: 40.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'RED-N13PP-256',
+    brand: 'Redmi',
+    model_name: 'Redmi Note 13 Pro+ 5G 256GB',
+    category: 'Mid-range',
+    price: 31999.00,
+    cost_price: 27199.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 93.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'RED-N13P-128',
+    brand: 'Redmi',
+    model_name: 'Redmi Note 13 Pro 5G 128GB',
+    category: 'Mid-range',
+    price: 25999.00,
+    cost_price: 22099.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 91.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'RED-N13-128',
+    brand: 'Redmi',
+    model_name: 'Redmi Note 13 5G 128GB',
+    category: 'Budget',
+    price: 17999.00,
+    cost_price: 15299.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 95.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'RED-N12P-128',
+    brand: 'Redmi',
+    model_name: 'Redmi Note 12 Pro 5G 128GB',
+    category: 'Mid-range',
+    price: 20999.00,
+    cost_price: 17849.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 25.0,
+    base_demand_score: 30.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'RED-13C-128',
+    brand: 'Redmi',
+    model_name: 'Redmi 13C 5G 128GB',
+    category: 'Budget',
+    price: 10999.00,
+    cost_price: 9349.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 94.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'RED-12-128',
+    brand: 'Redmi',
+    model_name: 'Redmi 12 5G 128GB',
+    category: 'Budget',
+    price: 11999.00,
+    cost_price: 10199.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 8.0,
+    base_demand_score: 82.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'RED-A3-64',
+    brand: 'Redmi',
+    model_name: 'Redmi A3 64GB',
+    category: 'Keypad/Budget',
+    price: 6999.00,
+    cost_price: 5949.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 92.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+
+  // 42-47: Realme
+  {
+    sku: 'RLM-12PP-256',
+    brand: 'Realme',
+    model_name: 'Realme 12 Pro+ 5G 256GB',
+    category: 'Mid-range',
+    price: 29999.00,
+    cost_price: 25499.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 87.0,
+    image_url: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=300'
+  },
+  {
+    sku: 'RLM-12P-128',
+    brand: 'Realme',
+    model_name: 'Realme 12 Pro 5G 128GB',
+    category: 'Mid-range',
+    price: 24999.00,
+    cost_price: 21249.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 85.0,
+    image_url: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=300'
+  },
+  {
+    sku: 'RLM-12-128',
+    brand: 'Realme',
+    model_name: 'Realme 12 5G 128GB',
+    category: 'Budget',
+    price: 16999.00,
+    cost_price: 14449.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 88.0,
+    image_url: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=300'
+  },
+  {
+    sku: 'RLM-NAR70P-128',
+    brand: 'Realme',
+    model_name: 'Realme Narzo 70 Pro 128GB',
+    category: 'Mid-range',
+    price: 19999.00,
+    cost_price: 16999.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 84.0,
+    image_url: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=300'
+  },
+  {
+    sku: 'RLM-C65-128',
+    brand: 'Realme',
+    model_name: 'Realme C65 5G 128GB',
+    category: 'Budget',
+    price: 10499.00,
+    cost_price: 8924.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 90.0,
+    image_url: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=300'
+  },
+  {
+    sku: 'RLM-C53-64',
+    brand: 'Realme',
+    model_name: 'Realme C53 64GB',
+    category: 'Keypad/Budget',
+    price: 8499.00,
+    cost_price: 7224.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 5.0,
+    base_demand_score: 86.0,
+    image_url: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=300'
+  },
+
+  // 48-55: Vivo
+  {
+    sku: 'VIV-X100P-512',
+    brand: 'Vivo',
+    model_name: 'Vivo X100 Pro 5G 512GB',
+    category: 'Flagship',
+    price: 89999.00,
+    cost_price: 75599.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 86.0,
+    image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300'
+  },
+  {
+    sku: 'VIV-X100-256',
+    brand: 'Vivo',
+    model_name: 'Vivo X100 5G 256GB',
+    category: 'Flagship',
+    price: 63999.00,
+    cost_price: 53759.00,
+    margin_percentage: 16.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 82.0,
+    image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300'
+  },
+  {
+    sku: 'VIV-V30P-256',
+    brand: 'Vivo',
+    model_name: 'Vivo V30 Pro 5G 256GB',
+    category: 'Premium',
+    price: 41999.00,
+    cost_price: 35699.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 90.0,
+    image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300'
+  },
+  {
+    sku: 'VIV-V30-128',
+    brand: 'Vivo',
+    model_name: 'Vivo V30 5G 128GB',
+    category: 'Mid-range',
+    price: 33999.00,
+    cost_price: 28899.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 89.0,
+    image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300'
+  },
+  {
+    sku: 'VIV-V29-128',
+    brand: 'Vivo',
+    model_name: 'Vivo V29 5G 128GB',
+    category: 'Mid-range',
+    price: 28999.00,
+    cost_price: 24649.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 18.0,
+    base_demand_score: 52.0,
+    image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300'
+  },
+  {
+    sku: 'VIV-Y200-128',
+    brand: 'Vivo',
+    model_name: 'Vivo Y200 5G 128GB',
+    category: 'Budget',
+    price: 21999.00,
+    cost_price: 18699.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 84.0,
+    image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300'
+  },
+  {
+    sku: 'VIV-T3-128',
+    brand: 'Vivo',
+    model_name: 'Vivo T3 5G 128GB',
+    category: 'Budget',
+    price: 19999.00,
+    cost_price: 16999.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 88.0,
+    image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300'
+  },
+  {
+    sku: 'VIV-Y18-64',
+    brand: 'Vivo',
+    model_name: 'Vivo Y18 64GB',
+    category: 'Keypad/Budget',
+    price: 8999.00,
+    cost_price: 7649.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 89.0,
+    image_url: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300'
+  },
+
+  // 56-60: Oppo
+  {
+    sku: 'OPP-REN11P-256',
+    brand: 'Oppo',
+    model_name: 'Oppo Reno 11 Pro 5G 256GB',
+    category: 'Premium',
+    price: 37999.00,
+    cost_price: 32299.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 86.0,
+    image_url: 'https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=300'
+  },
+  {
+    sku: 'OPP-REN11-128',
+    brand: 'Oppo',
+    model_name: 'Oppo Reno 11 5G 128GB',
+    category: 'Mid-range',
+    price: 29999.00,
+    cost_price: 25499.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 85.0,
+    image_url: 'https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=300'
+  },
+  {
+    sku: 'OPP-F25P-128',
+    brand: 'Oppo',
+    model_name: 'Oppo F25 Pro 5G 128GB',
+    category: 'Mid-range',
+    price: 23999.00,
+    cost_price: 20399.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 87.0,
+    image_url: 'https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=300'
+  },
+  {
+    sku: 'OPP-A79-128',
+    brand: 'Oppo',
+    model_name: 'Oppo A79 5G 128GB',
+    category: 'Budget',
+    price: 17499.00,
+    cost_price: 14874.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 5.0,
+    base_demand_score: 79.0,
+    image_url: 'https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=300'
+  },
+  {
+    sku: 'OPP-A38-128',
+    brand: 'Oppo',
+    model_name: 'Oppo A38 128GB',
+    category: 'Keypad/Budget',
+    price: 9999.00,
+    cost_price: 8499.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 85.0,
+    image_url: 'https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=300'
+  },
+
+  // 61-65: Motorola
+  {
+    sku: 'MOT-EDG50P-256',
+    brand: 'Motorola',
+    model_name: 'Motorola Edge 50 Pro 256GB',
+    category: 'Premium',
+    price: 31999.00,
+    cost_price: 27199.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 88.0,
+    image_url: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300'
+  },
+  {
+    sku: 'MOT-EDG40N-128',
+    brand: 'Motorola',
+    model_name: 'Motorola Edge 40 Neo 128GB',
+    category: 'Mid-range',
+    price: 22999.00,
+    cost_price: 19549.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 10.0,
+    base_demand_score: 75.0,
+    image_url: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300'
+  },
+  {
+    sku: 'MOT-G84-256',
+    brand: 'Motorola',
+    model_name: 'Moto G84 5G 256GB',
+    category: 'Budget',
+    price: 17999.00,
+    cost_price: 15299.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 82.0,
+    image_url: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300'
+  },
+  {
+    sku: 'MOT-G54-128',
+    brand: 'Motorola',
+    model_name: 'Moto G54 5G 128GB',
+    category: 'Budget',
+    price: 13999.00,
+    cost_price: 11899.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 12.0,
+    base_demand_score: 65.0,
+    image_url: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300'
+  },
+  {
+    sku: 'MOT-G24P-128',
+    brand: 'Motorola',
+    model_name: 'Moto G24 Power 128GB',
+    category: 'Keypad/Budget',
+    price: 7999.00,
+    cost_price: 6799.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 87.0,
+    image_url: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300'
+  },
+
+  // 66-67: Nothing
+  {
+    sku: 'NOT-PH2-256',
+    brand: 'Nothing',
+    model_name: 'Nothing Phone (2) 256GB',
+    category: 'Premium',
+    price: 39999.00,
+    cost_price: 33999.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 8.0,
+    base_demand_score: 74.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+  {
+    sku: 'NOT-PH2A-128',
+    brand: 'Nothing',
+    model_name: 'Nothing Phone (2a) 128GB',
+    category: 'Mid-range',
+    price: 23999.00,
+    cost_price: 20399.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 92.0,
+    image_url: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300'
+  },
+
+  // 68-70: Nokia & Feature / Keypad Phones (matching ~₹6,000+ budget baseline)
+  {
+    sku: 'NOK-G42-128',
+    brand: 'Nokia',
+    model_name: 'Nokia G42 5G 128GB',
+    category: 'Budget',
+    price: 11999.00,
+    cost_price: 10199.00,
+    margin_percentage: 15.0,
+    markdown_percentage: 5.0,
+    base_demand_score: 68.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'NOK-2660-FLIP',
+    brand: 'Nokia',
+    model_name: 'Nokia 2660 Flip 4G Retro',
+    category: 'Keypad/Budget',
+    price: 6499.00,
+    cost_price: 5394.00,
+    margin_percentage: 17.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 84.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  },
+  {
+    sku: 'NOK-105-PLUS',
+    brand: 'Nokia',
+    model_name: 'Nokia 105 Plus Dual Bundle',
+    category: 'Keypad/Budget',
+    price: 6000.00,
+    cost_price: 4980.00,
+    margin_percentage: 17.0,
+    markdown_percentage: 0.0,
+    base_demand_score: 88.0,
+    image_url: 'https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300'
+  }
+];
+
+const seedProducts = async () => {
+  console.log('[Seed] Seeding 70 realistic mobile models...');
+  await Product.bulkCreate(productsData, { updateOnDuplicate: Object.keys(productsData[0]) });
+  console.log(`[Seed] Successfully seeded ${productsData.length} products.`);
+  return await Product.findAll();
+};
+
+module.exports = { seedProducts, productsData };
