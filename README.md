@@ -1,259 +1,399 @@
-# MobiMart — Mobile Retail Chain Inventory Optimization & EOL Risk System
+# MobiMart — Mobile Retail Chain Inventory Optimization System
 
-[![Node.js](https://img.shields.io/badge/Node.js-v20+-green.svg)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/React-v18-blue.svg)](https://reactjs.org/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)](https://www.mysql.com/)
-[![Sequelize](https://img.shields.io/badge/Sequelize-ORM-lightblue.svg)](https://sequelize.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8.svg)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-v20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-v18-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-v5-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Express.js](https://img.shields.io/badge/Express.js-v4-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![Sequelize](https://img.shields.io/badge/Sequelize-ORM-52B0E7?logo=sequelize&logoColor=white)](https://sequelize.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-Production-grade full-stack web application built for the **Mirai Labs Software Developer Intern Assessment B — The Mobile Retail Chain (MobiMart)**.
+**MobiMart** is a production-grade full-stack inventory optimization and decision-support web application developed for the **Mirai Labs Software Developer Intern Assignment B — The Mobile Retail Chain (MobiMart)**.
+
+The system manages a retail chain network of **25 mobile stores across Karnataka** operating with approximately **70 mobile models** under an enforced **₹4.00 Crore (₹40,000,000)** chain-wide working capital budget ceiling. MobiMart determines optimal warehouse-to-store stock allocations, flags End-of-Life (EOL) inventory risks, evaluates trade-offs between **HOLD**, **TRANSFER**, and **MARKDOWN** actions, and provides executive decision reasoning backed by real-time financial metrics.
 
 ---
 
-## 1. Executive Business Problem
+## 🎯 Problem Statement
 
-MobiMart operates a retail network of **25 stores across Karnataka** (8 high-street/mall stores in Bangalore and 17 stores in regional Tier-2/Tier-3 cities such as Mysore, Hubli, Mangalore, Belgaum, Davangere, Tumkur, Shimoga, Bellary, Gulbarga, Udupi, Hassan, Bijapur, and Bidar). The chain manages approximately **70 mobile models** spanning from ₹6,000 budget phones to ₹1,50,000 premium flagships, replenished from a **Central Warehouse** under an enforced chain-wide inventory budget of **₹4.00 Crore (₹40,000,000)**.
-
-The core challenge confronting ownership is:
+The core operational challenge confronting the chain owner is:
 
 > **"My money is sitting in the wrong phones in the wrong stores."**
 
-Without optimization, retail chains commit classic errors:
-1. **Capital Trapping in Mismatched Catchments**: High-value flagship devices (e.g. ₹1,29,999 Galaxy S24 Ultra) sit unsold with 8+ weeks of cover in low-income Tier-3 towns (e.g., Davangere, Bidar) while stockouts occur in affluent Bangalore catchments (Jayanagar, Indiranagar, Whitefield).
-2. **Successor Cannibalisation Ignorance**: When a new flagship launches, predecessor models suffer rapid sales velocity drops (50%–75%). Traditional reordering continues to push obsolete phones into stores.
-3. **Severe Stockout Revenue Leakage**: Fast-selling mid-range and budget phones run dry during peak weekends and festive surges (Diwali, Dussehra, Ugadi), forfeiting customer loyalty and immediate gross margin.
-
-**MobiMart Optimization Suite solves this by providing automated weekly allocation recommendations, proactive EOL liquidation routing (HOLD vs TRANSFER vs MARKDOWN), and transparent Rupee-based reasoning.**
-
----
-
-## 2. Technology Stack
-
-### Backend
-- **Runtime**: Node.js (v20+)
-- **Framework**: Express.js REST API
-- **ORM**: Sequelize ORM v6
-- **Database**: MySQL 8.0 (Database: `Mobi_Mart`)
-- **Security & Config**: `dotenv`, `cors`, parameterized SQL queries, connection pooling
-
-### Frontend
-- **Framework**: React 18 with Vite
-- **Routing**: React Router v6
-- **HTTP Client**: Axios
-- **Visualizations & Charts**: Recharts (Area, Bar, Pie, Line charts)
-- **Styling**: Tailwind CSS, Lucide React icons, dark-themed responsive executive dashboard
-- **Currency & Localization**: Indian Rupee Formatting (`₹4,00,00,000`, `₹28.5 L`, `₹1,25,000`)
+In traditional retail chains, inventory is often distributed uniformly or based purely on past sales volume, leading to critical inefficiencies:
+- **Demographic & Catchment Mismatch**: High-value ₹1,20,000+ flagship devices sit idle with 8+ weeks of cover in low-income town centers, while affluent urban stores run out of stock.
+- **Product Lifecycle & Cannibalisation Blindness**: When a new flagship successor is announced, sales of the predecessor plummet by 50%–75%. Blind reordering traps capital in rapidly depreciating models.
+- **Enforced Capital Constraints**: Inventory capital cannot exceed ₹4.00 Crore across the central warehouse and store network. Every rupee misallocated directly prevents purchasing fast-moving stock.
+- **Financial Asymmetry of Stock Actions**: Stockouts cause immediate gross profit loss and customer churn, while holding obsolete inventory triggers severe depreciation; inter-store transfers incur logistics fees (₹300–₹800/unit), and price markdowns cut margins by 15%–30%.
+- **Seasonal Demand Volatility**: Festive weeks (Diwali, Dussehra, Ugadi) create 1.8x to 3.8x demand surges that overwhelm static replenishment rules.
 
 ---
 
-## 3. System Architecture & Relational Schema
+## 💡 Solution
+
+MobiMart delivers an automated, mathematically sound replenishment and risk mitigation engine:
+
+1. **Deterministic Retail Simulation**: Generates a 12-month historical dataset (91,000 sales transactions) with authentic seasonal multipliers and footfall profiles.
+2. **Store Demand Profiling**: Analyzes each store's catchment income, footfall score, and historical category preference (Flagship, Premium, Mid-range, Budget, Keypad).
+3. **Product Lifecycle & Successor Tracking**: Monitors models across 7 lifecycle stages (`NEW`, `GROWING`, `PEAK`, `MATURE`, `DECLINING`, `EOL_RISK`, `EOL`) and calculates predecessor decay curves.
+4. **4-Week Forward Demand Forecasting**: Combines baseline run-rates, store affinity weights, lifecycle factors, and festival multipliers.
+5. **Multi-Factor Weekly Allocation Engine**: Generates store replenishment recommendations every Monday with line-by-line Rupee reasoning.
+6. **₹4.00 Crore Knapsack Budget Cap**: Enforces the hard capital ceiling across warehouse buffer stock and 25 retail branches.
+7. **Actionable EOL Risk Mitigation**: Computes expected financial loss across **HOLD vs TRANSFER vs MARKDOWN** and recommends the lowest-loss action.
+8. **Naive Baseline Benchmark Comparison**: Benchmarks our multi-factor engine against the standard naive proportional baseline across 5 key retail metrics.
+9. **Executive Owner Analytics**: Delivers interactive visibility into capital deployment, brand revenue distribution, and 4-week recommendation ROI.
+10. **Interactive Live Defense Simulator**: Allows stakeholders to simulate sudden successor announcements and sales shocks in real-time.
+
+---
+
+## ⭐ Key Features
+
+- **Executive Owner Dashboard**: Answers *"Where is my capital?"*, *"What stock is at risk?"*, and displays the dynamic 4-week net financial ROI.
+- **Store Network Management & Profiling**: Catchment scoring (0–100) across 8 Bangalore stores, 8 Tier-2 regional hubs, and 9 Tier-3 towns.
+- **Mobile Product Catalog**: 70 phone models spanning 5 price tiers (₹6,000 to ₹1,54,999) with lifecycle tracking and successor cannibalisation curves.
+- **Central & Store Inventory Management**: Central warehouse stock and 25-store distributed inventory with Weeks of Cover (WoC) and dead stock monitoring.
+- **Weekly Inventory Allocation Engine**: Recommends optimal Monday shipments prioritizing critical stockout avoidance and high margin contribution.
+- **₹4.00 Crore Capital Enforcement**: Hard budget ceiling tracking across warehouse inventory and store stock.
+- **EOL Risk Mitigation Engine**: Compares financial outcomes of **HOLD** (depreciation + carrying cost), **TRANSFER** (inter-store logistics), and **MARKDOWN** (15%–30% discount).
+- **Rupee-Based Decision Reasoning**: Clear, human-readable explanations behind every replenishment recommendation (e.g., *"High margin (18.5%), high store fit (88/100), forecast demand exceeds stock by 4 units"*).
+- **12-Month Sales Analytics**: Monthly revenue & gross margin trajectory, category contributions, and brand revenue distributions.
+- **Festive Demand Surge Dynamics**: Multipliers modeled for Ugadi (1.8x), Mysore Dussehra (2.6x), Diwali (3.8x), and New Year (1.6x).
+- **5-Metric Baseline Comparison**: Evaluates Stockout Rate, Weeks of Cover, Dead Stock %, Markdown Losses, and Capital Turns against naive allocation.
+- **Live Defense Disruption Simulator**: Testbed for immediate algorithmic reallocation during sudden market disruptions.
+
+---
+
+## 🧠 How the Allocation Engine Works
+
+The engine executes every Monday to determine optimal stock transfers from the Central Warehouse to the 25 retail stores:
 
 ```
-MobiMart/
-├── backend/
-│   ├── src/
-│   │   ├── config/database.js         # MySQL Sequelize connection pool
-│   │   ├── models/                    # 14 Relational Sequelize Models
-│   │   ├── services/
-│   │   │   ├── storeProfileService.js # Catchment scoring & category affinity
-│   │   │   ├── eolRiskEngine.js       # EOL detection & HOLD/TRANSFER/MARKDOWN optimizer
-│   │   │   ├── allocationEngine.js    # Weekly allocation & ₹4 Cr budget enforcement
-│   │   │   ├── baselineService.js     # Naive proportional baseline comparison
-│   │   │   ├── scenarioService.js     # Live defense disruption simulator
-│   │   │   └── dashboardService.js    # Capital visibility & dynamic 4-week impact
-│   │   ├── controllers/               # REST API Controllers
-│   │   ├── routes/                    # API Route Endpoints
-│   │   ├── seeds/                     # Deterministic Seed Generator
-│   │   ├── utils/                     # Currency & Constants
-│   │   ├── app.js & server.js
-├── frontend/
-│   ├── src/
-│   │   ├── components/                # Navbar, Sidebar, StatCard, Badge, Modal, Layout
-│   │   ├── pages/                     # 8 Core UI Pages + Live Scenario Simulator
-│   │   ├── services/api.js            # Axios REST Client
-│   │   └── utils/currency.js          # Indian Rupee Formatter
+┌─────────────────────────┐     ┌─────────────────────────┐
+│ 12-Month Sales History  │     │ Store Catchment Profile │
+└────────────┬────────────┘     └────────────┬────────────┘
+             │                               │
+             ▼                               ▼
+       ┌───────────────────────────────────────────┐
+       │   4-Week Dynamic Forward Demand Forecast  │
+       └─────────────────────┬─────────────────────┘
+                             │
+                             ▼
+       ┌───────────────────────────────────────────┐
+       │   Current Store Stock vs Target Cover     │
+       └─────────────────────┬─────────────────────┘
+                             │
+                             ▼
+       ┌───────────────────────────────────────────┐
+       │  Multi-Factor Priority Scoring Algorithm  │
+       │   (Demand 30% • Fit 25% • Stockout 20%    │
+       │     Margin 15% • EOL Health 10%)          │
+       └─────────────────────┬─────────────────────┘
+                             │
+                             ▼
+       ┌───────────────────────────────────────────┐
+       │ ₹4.00 Crore Budget & Warehouse Constraint │
+       └─────────────────────┬─────────────────────┘
+                             │
+                             ▼
+       ┌───────────────────────────────────────────┐
+       │ Recommended Shipments with Rupee Reasoning│
+       └───────────────────────────────────────────┘
 ```
 
-### Relational Database Models (14 Models)
-1. **`stores`**: 25 stores across Karnataka, tier, catchment income, footfall score, size, and category preference scores (0–100).
-2. **`products`**: 70 phone models, brand, category, MRP (₹6,000–₹1,50,000), procurement cost price, gross margin %, base demand score.
-3. **`product_lifecycles`**: Lifecycle stage (`NEW`, `GROWING`, `PEAK`, `MATURE`, `DECLINING`, `EOL_RISK`, `EOL`), successor link, rumoured vs confirmed launch dates, cannibalisation rate.
-4. **`inventory`**: Central warehouse and store stock, available qty, reserved qty, unit cost, total value, weeks of cover, dead stock flags.
-5. **`sales`**: 12 months historical weekly sales (91,000 records) with festive week multipliers, lost units, and lost gross profit.
-6. **`allocations`**: Weekly generated Monday allocation batches with total investment, ₹4 Cr budget cap, and expected margin.
-7. **`allocation_items`**: Line items with store, product, forecast demand, recommended units, priority, and Rupee reasoning.
-8. **`eol_risks`**: Active vulnerability records with HOLD expected loss, TRANSFER net gain, and MARKDOWN loss.
-9. **`transfers`**: Inter-store relocation orders with variable logistics costs (₹300–₹800/unit) and transit times.
-10. **`markdowns`**: Active and proposed 15%–30% price cuts.
-11. **`stockouts`**: Historical stockout events, duration, lost revenue, and churn risk.
-12. **`baseline_results`**: Proportional volume allocation results for comparative auditing.
-13. **`performance_metrics`**: Benchmark comparison across the 5 required assessment metrics.
-14. **`scenarios`**: Live defense scenario snapshots storing Before vs After deltas.
+### Allocation Scoring & Prioritization
+1. **Shortfall Calculation**:
+   $$\text{Target Stock} = \text{Forecast Weekly Demand} \times \text{Target WoC (2.5 to 3.0)}$$
+   $$\text{Replenishment Units} = \max(0, \text{Target Stock} - \text{Current Store Stock})$$
+2. **Priority Tier Assignment**:
+   - **`CRITICAL`**: Stockout imminent within $<1.0\text{ week}$ on high-velocity SKUs.
+   - **`HIGH`**: Strong store demand fit with high gross margin percentage.
+   - **`MEDIUM`**: Balanced regular replenishment for healthy cover maintenance.
+   - **`LOW`**: Slow-moving or declining lifecycle stage.
+3. **Knapsack Budget Constraint**:
+   $$\text{Total Chain Inventory Value} + \sum (\text{Allocated Units} \times \text{Unit Cost}) \le \text{₹4,00,00,000}$$
 
 ---
 
-## 4. Deterministic Data Generation
+## 📉 EOL Risk Management
 
-Populate the complete application with realistic, mathematically consistent data:
+When a phone reaches the `DECLINING` or `EOL_RISK` lifecycle stage, or when a successor model launch is confirmed, the engine evaluates three mutually exclusive strategies:
+
+```
+                               ┌─────────────────────────┐
+                               │ Flagged Vulnerable SKU  │
+                               └────────────┬────────────┘
+                                            │
+                     ┌──────────────────────┼──────────────────────┐
+                     ▼                      ▼                      ▼
+           ┌──────────────────┐   ┌──────────────────┐   ┌──────────────────┐
+           │   OPTION 1: HOLD │   │OPTION 2: TRANSFER│   │OPTION 3: MARKDOWN│
+           └─────────┬────────┘   └─────────┬────────┘   └─────────┬────────┘
+                     │                      │                      │
+                     ▼                      ▼                      ▼
+           Depreciation Loss +    Variable Logistics +   15% to 30% Margin
+           2%/mo Carrying Cost    Target Absorption Gain   Discount Loss
+                     │                      │                      │
+                     └──────────────────────┼──────────────────────┘
+                                            │
+                                            ▼
+                               ┌─────────────────────────┐
+                               │  Recommended Best Action │
+                               │  (Lowest Financial Loss)│
+                               └─────────────────────────┘
+```
+
+- **HOLD**: Retain stock at current location. Evaluates monthly carrying cost (2%) and anticipated residual value depreciation.
+- **TRANSFER**: Relocate stock to a higher-velocity store. Accounts for variable logistics costs (**₹300 to ₹800 per unit**) depending on distance:
+  - *Intra-City (Bangalore)*: ₹350/unit (1-day transit)
+  - *Inter-City (Tier-1 $\to$ Tier-2)*: ₹650/unit (2-day transit)
+  - *Remote Hub (Tier-3 town)*: ₹780/unit (2-day transit)
+- **MARKDOWN**: Apply an immediate **15% to 30% price reduction** to clear aging units before the successor arrives.
+
+---
+
+## 🏪 Store Network Profiling
+
+The 25 stores are distributed across 3 distinct tiers in Karnataka:
+
+| Tier | Locations | Characteristics & Demand Focus |
+|---|---|---|
+| **Tier-1 (8 Stores)** | Bangalore (Jayanagar, Indiranagar, Whitefield, Koramangala, Malleshwaram, HSR Layout, Rajajinagar, Electronic City) | High catchment income (75–95/100), high mall/high-street footfall, strong demand for **Flagship (₹80k–₹1.5L)** and **Premium (₹45k–₹80k)** devices. |
+| **Tier-2 (8 Stores)** | Mysore, Hubli, Mangalore, Belgaum | Balanced catchment income (50–70/100), high commercial street footfall, high demand for **Mid-range (₹20k–₹45k)** and **Budget (₹10k–₹20k)** devices. |
+| **Tier-3 (9 Stores)** | Davangere, Tumkur, Shimoga, Bellary, Gulbarga, Udupi, Hassan, Bijapur, Bidar | Value-conscious catchment (30–50/100), local bazaar footfall, strong volume demand for **Budget (₹10k–₹20k)** and **Keypad/Budget (₹6k–₹10k)** devices. |
+
+### Real Store Profiling Example:
+- **Jayanagar Flagship Store (`BLR-JAY-01`)**: Income Score: `92/100`, Footfall: `88/100` $\implies$ Flagship Affinity: `91/100`, Keypad Affinity: `22/100`.
+- **Davangere Mandipet Store (`DVG-MAN-01`)**: Income Score: `38/100`, Footfall: `72/100` $\implies$ Flagship Affinity: `28/100`, Budget/Keypad Affinity: `89/100`.
+
+---
+
+## 📊 Analytics & Visualizations
+
+The analytics suite includes:
+
+1. **12-Month Revenue & Margin Trajectory**: Area chart showing annual revenue and gross profit curves.
+2. **Category Revenue Contribution**: Breakdown across Flagship, Premium, Mid-range, Budget, and Keypad tiers.
+3. **Brand Revenue Distribution**: Aggregated sales across Samsung, Apple, OnePlus, Redmi, Realme, Vivo, Oppo, Motorola, and Nothing (switchable between vertical bar and donut charts).
+4. **Festive Demand Multipliers**: Quantifies weekly volume surges over normal non-festive baselines:
+   - *Normal Baseline*: 1.0x (2,097 units/wk)
+   - *Ugadi*: 1.8x (3,730 units/wk)
+   - *Mysore Dussehra*: 2.6x (5,348 units/wk)
+   - *Diwali*: 3.8x (8,015 units/wk)
+   - *New Year*: 1.6x (3,305 units/wk)
+5. **Regional City Contributions**: Revenue rankings across Bangalore, Mysore, Hubli, Mangalore, and regional town hubs.
+
+---
+
+## 📈 Baseline Comparison (5 Key Metrics)
+
+The system compares the multi-factor optimization engine against the assessment's **Naive Proportional Baseline** (*"allocates inventory purely proportional to each store's total sales volume over the past 30 days"*):
+
+```
+=========================================================================================
+                                BENCHMARK KPI EVALUATION
+=========================================================================================
+Benchmark Metric              MobiMart Optimization    Naive Baseline    Business Impact
+-----------------------------------------------------------------------------------------
+1. Stockout Rate (%)          3.4%                     6.3%              -46% fewer stockouts
+2. Weeks of Cover (WoC)       3.1 weeks                4.8 weeks         Lean & agile velocity
+3. Dead Stock Percentage (%)  3.8%                     8.6%              Avoids rural traps
+4. Markdown Losses (₹)        ₹2,10,000                ₹4,85,000         ₹2.75L capital saved
+5. Capital Turns              7.4x                     5.8x              Faster circulation
+=========================================================================================
+```
+
+### Why the Optimization Outperforms Naive Allocation:
+- **Prevents Capital Trapping**: Does not send ₹1.5L flagships to Tier-3 towns simply because those stores sell high volumes of keypad phones.
+- **Accounts for Cannibalisation**: Halts reorders on predecessor models as soon as successors launch.
+- **Proactive EOL Liquidation**: Triggers inter-store transfers before forced 30% markdown write-offs occur.
+
+---
+
+## 🎯 Live Defense Scenario Simulator
+
+The live defense testbed simulates market disruption events:
+
+- **Scenario Parameters**:
+  - Target model: Flagship device (e.g., Samsung Galaxy S24 Ultra or Apple iPhone 15 Pro Max) holding 42 units across 9 stores.
+  - Successor launch: Confirmed in **10 days**.
+  - Local shock: **40% sudden sales drop** at Jayanagar store.
+- **System Actions**:
+  1. Escalates EOL Risk Score immediately to **Critical (92/100)**.
+  2. Reduces target holding in Jayanagar from 12 units down to 4 units.
+  3. Clears flagship stock from slower regional stores to eliminate markdown exposure.
+  4. Generates transfer orders routing units to high-velocity hubs (Indiranagar, Whitefield, Mangalore Forum).
+  5. Computes exact inter-store logistics costs (₹300–₹800/unit) and calculates net markdown losses avoided.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Frontend Framework** | React 18 (`react`, `react-dom`) | Declarative Component-Based UI |
+| **Build Tool & Bundler** | Vite 5 (`vite`) | High-Speed HMR & Optimized Bundling |
+| **Routing** | React Router v6 (`react-router-dom`) | Multi-Page Client Navigation |
+| **Styling & Icons** | Tailwind CSS 3, Lucide React | Responsive Theme & High-Contrast Design |
+| **Data Visualizations** | Recharts 2 (`recharts`) | Interactive Area, Bar, Pie, and Line Charts |
+| **API Client** | Axios (`axios`) | In-Memory Cached HTTP Client |
+| **Backend Runtime** | Node.js (v20+) | Event-Driven JavaScript Runtime |
+| **Web Server Framework** | Express.js 4 (`express`) | REST API Routing & Middleware |
+| **Database ORM** | Sequelize 6 (`sequelize`) | Relational Mapping, Schema & Transactions |
+| **Database Driver** | MySQL2 (`mysql2`) | High-Performance MySQL 8.0 Driver |
+| **Environment & Tooling** | `dotenv`, `cors`, `nodemon`, `concurrently` | Config & Developer Workflow |
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    UI[React + Vite Frontend] <-->|JSON REST APIs / Axios| SVR[Node.js + Express Server]
+    
+    subgraph Backend Core Services
+        SVR --> SP[Store Profiling Service]
+        SVR --> AE[Allocation Optimizer Engine]
+        SVR --> EOL[EOL Risk Engine]
+        SVR --> BL[Baseline Comparison Service]
+        SVR --> SC[Live Defense Scenario Simulator]
+        SVR --> DS[Executive Dashboard Service]
+    end
+    
+    subgraph Data Layer
+        SP & AE & EOL & BL & SC & DS <--> ORM[Sequelize ORM Pool]
+        ORM <--> DB[(MySQL 8.0 Database: Mobi_Mart)]
+    end
+```
+
+---
+
+## 🗄️ Database Schema & Entities
+
+The database consists of **14 relational models** managed via Sequelize ORM in MySQL (`Mobi_Mart`):
+
+### 1. Master Data Entities
+- **`stores`**: ID, code, name, city, tier, area, store type, sqft, income score, footfall score, footfall level, category demand preferences.
+- **`products`**: ID, sku, brand, model name, category, price (MRP), cost price, margin %, base demand score.
+- **`product_lifecycles`**: ID, product ID, launch date, stage, successor product ID, successor name, rumoured launch date, confirmed launch date, cannibalisation rate.
+
+### 2. Operational Data Entities
+- **`sales`**: ID, product ID, store ID, week number, year/month, units sold, revenue, cost of goods, gross profit, is festive week, festival name, stockout occurred, lost units, lost gross profit.
+- **`inventory`**: ID, product ID, store ID, is warehouse, current quantity, available quantity, reserved quantity, unit cost, inventory value, weeks of cover, is dead stock, dead stock reason.
+- **`stockouts`**: ID, product ID, store ID, week number, duration days, lost sales units, lost revenue, customer churn risk.
+
+### 3. Optimization Entities
+- **`allocations`**: ID, week identifier, allocation date, total units allocated, total investment, expected revenue, expected gross margin, budget limit, budget utilized percentage.
+- **`allocation_items`**: ID, allocation ID, store ID, product ID, current store stock, forecast demand units, recommended quantity, unit cost, total investment, expected margin, priority tier, reason.
+- **`eol_risks`**: ID, product ID, store ID, current stock, inventory value, weeks of cover, risk score, risk tier, trigger reason, hold expected loss, hold carrying cost, transfer suggested store ID, transfer cost, transfer expected loss, markdown suggested %, markdown expected loss, recommended action, action executed, executed action type.
+- **`transfers`**: ID, product ID, from store ID, to store ID, quantity, cost per unit, total transfer cost, estimated delivery days, status, reason, expected salvage gain.
+- **`markdowns`**: ID, product ID, store ID, original price, discount percentage, discounted price, affected quantity, total markdown loss, status, reason.
+
+### 4. Analytics & Benchmark Entities
+- **`baseline_results`**: ID, allocation date, store ID, product ID, store past sales proportion, allocated units, dead stock units, dead stock value, markdown loss.
+- **`performance_metrics`**: ID, metric date, our stockout rate, baseline stockout rate, our weeks of cover, baseline weeks of cover, our dead stock %, baseline dead stock %, our markdown loss, baseline markdown loss, our capital turns, baseline capital turns, notes.
+- **`scenario_logs`**: ID, scenario name, execution date, affected product ID, affected store ID, days to launch, store sales drop %, new EOL risk score, new risk tier, markdown avoided amount, total transfer cost, explanation, result snapshot.
+
+---
+
+## 📦 Mock Data Generation
+
+MobiMart includes a deterministic seed generator that populates the complete relational structure:
 
 ```bash
 npm run seed
 ```
 
-### 1. Store Network (25 Stores across Karnataka)
-- **8 Bangalore Stores**: Jayanagar (Affluent Flagship), Indiranagar (High-Tech Experience Center), Whitefield (IT Corridor Mall), Koramangala (Youth High-Street), Malleshwaram (Traditional Balanced), HSR Layout (Suburban Hub), Rajajinagar (Popular Market), Electronic City (Tech Value).
-- **17 Regional Towns**: Mysore (Mall of Mysore & Saraswathipuram), Hubli (Gokul Road & CBT Market), Mangalore (Forum Fiza & KS Rao Rd), Belgaum (Tilakwadi & Kirloskar Rd), Davangere (Mandipet), Tumkur (MG Road), Shimoga (Nehru Road), Bellary (Car Street), Gulbarga (Super Market), Udupi (City Bus Stand), Hassan (BM Road), Bijapur (Gandhi Chowk), Bidar (Main Market).
-
-### 2. Mobile Catalog (70 Phones across 5 Categories)
-- **Brands**: Apple, Samsung, OnePlus, Xiaomi, Redmi, Realme, Vivo, Oppo, Motorola, Nothing, Nokia.
-- **Price Segments**:
-  - `Flagship`: ₹80,000 – ₹1,54,999 (iPhone 15 Pro Max, Galaxy S24 Ultra, Xiaomi 14 Ultra, Vivo X100 Pro)
-  - `Premium`: ₹45,000 – ₹80,000 (iPhone 15, OnePlus 12R, Vivo V30 Pro, Reno 11 Pro)
-  - `Mid-range`: ₹20,000 – ₹45,000 (Redmi Note 13 Pro+, OnePlus Nord 4, Nothing Phone 2a, Galaxy A35)
-  - `Budget`: ₹10,000 – ₹20,000 (Redmi Note 13, Realme 12, Galaxy A15 5G, Moto G84)
-  - `Keypad/Budget`: ₹6,000 – ₹10,000 (Redmi A3, Realme C53, Nokia 2660 Flip, Nokia 105 Plus Dual)
-
-### 3. Realistic 12-Month Sales Dynamics
-$$\text{Demand} = \text{Base Run-Rate} \times \text{Store Catchment Fit} \times \text{Festival Multiplier} \times \text{Lifecycle Factor} \times \text{Cannibalisation} + \epsilon$$
-
-- **Festival Spikes**:
-  - *Ugadi & Akshaya Tritiya* (Month 4): 1.8x surge
-  - *Mysore Dussehra* (Month 9): 2.5x surge
-  - *Diwali Mega Festival* (Month 10): 3.6x–4.0x surge across flagship & mid-range
-  - *Year-End Gala* (Month 12): 1.6x surge
-- **Predecessor Cannibalisation**: When a successor enters `PEAK` / `GROWING`, predecessor sales decrease by 50% to 75%.
+### Generated Dataset Specifications:
+- **25 Stores**: 8 Bangalore branches + 17 regional Tier-2/Tier-3 city stores.
+- **70 Mobile Models**: Spanning Apple, Samsung, OnePlus, Xiaomi, Redmi, Realme, Vivo, Oppo, Motorola, Nothing, and Nokia across 5 price tiers.
+- **91,000 Sales Records**: 52 weeks of sales history for every store-product combination with festival spikes and predecessor cannibalisation decay.
+- **1,820 Inventory Batches**: Fully initialized warehouse buffer inventory and store stock.
 
 ---
 
-## 5. Core Algorithms & Mathematical Formulations
-
-### A. Store Demand Profiling Engine
-Each store is assigned dynamic category affinity scores (0–100):
-$$\text{Flagship Score} = (\text{Flagship Pref} \times 0.5) + (\text{Income Score} \times 0.3) + (\text{Footfall Score} \times 0.2)$$
-$$\text{Budget Score} = (\text{Budget Pref} \times 0.6) + ((100 - \text{Income Score}) \times 0.25) + (\text{Footfall Score} \times 0.15)$$
-
-### B. Weekly Allocation Optimizer & ₹4.00 Crore Budget Enforcement
-Every Monday, the engine calculates store-by-store replenishment from Central Warehouse stock:
-1. **4-Week Forecast Demand**:
-   $$\text{Forecast Units} = \text{Weekly Sales Run-Rate} \times \text{Store Fit} \times \text{Lifecycle Multiplier} \times \text{EOL Dampener} \times 4$$
-2. **Target Inventory Level**:
-   $$\text{Target Stock} = \text{Forecast Weekly Units} \times \text{Target WoC (2.5 to 3.0)}$$
-   $$\text{Shortfall} = \max(0, \text{Target Stock} - \text{Current Store Stock})$$
-3. **Multi-Factor Priority Scoring**:
-   $$\text{Score} = (\text{Demand} \times 0.30) + (\text{Store Fit} \times 0.25) + (\text{Stockout Severity} \times 0.20) + (\text{Margin \%} \times 0.15) + ((100 - \text{EOL Risk}) \times 0.10)$$
-4. **Knapsack Budget Constraint**:
-   $$\sum \text{Store Inventory Value} + \sum \text{Allocated Units} \times \text{Unit Cost} \le \text{₹4,00,00,000}$$
-
-### C. End-of-Life (EOL) Action Optimizer (HOLD vs TRANSFER vs MARKDOWN)
-For vulnerable stock, the engine evaluates 3 mutually exclusive options:
-1. **HOLD**:
-   $$\text{Expected Loss} = (\text{Qty} \times \text{Unit Cost} \times \text{Depreciation Rate} \times (1 - P_{\text{clear}})) + (\text{Qty} \times \text{Unit Cost} \times 2\% \times \text{Months Held})$$
-2. **TRANSFER**:
-   $$\text{Variable Cost} = \text{Qty} \times \text{Logistics Rate (₹350 intra-city, ₹650 inter-city, ₹780 remote)}$$
-   $$\text{Net Loss} = \text{Variable Transfer Cost} + (\text{Qty} \times \text{Unit Cost} \times (1 - \text{Absorption Rate}) \times 0.2)$$
-3. **MARKDOWN**:
-   $$\text{Markdown Loss} = \text{Qty} \times (\text{MRP} \times \text{Discount Rate (15\%–30\%)})$$
-
-**The system automatically recommends the action with the lowest net financial loss / highest capital salvage.**
-
----
-
-## 6. Naive Baseline vs Our Algorithm (Honest Comparison)
-
-The naive baseline allocates central inventory **purely proportional to each store's total volume in the previous 30 days**.
-
-### Benchmark KPI Results (Computed from Generated 12-Month Dataset)
-
-| Benchmark Metric | MobiMart Multi-Factor Engine | Naive Proportional Baseline | Analysis / Trade-Off |
-| :--- | :---: | :---: | :--- |
-| **Stockout Rate (%)** | **3.4%** | **6.3%** | -46% fewer stockouts; protects high-margin demand in flagship stores. |
-| **Weeks of Cover (WoC)** | **3.1 weeks** | **4.8 weeks** | Lean capital velocity without bloating slow stores. |
-| **Dead Stock Percentage (%)** | **3.8%** | **8.6%** | Eliminates rural flagship traps and obsolete predecessor overstock. |
-| **Markdown Losses (₹)** | **₹2,10,000** | **₹4,85,000** | Saves ₹2.75L in avoided price slashes via smart inter-store transfers. |
-| **Capital Turns** | **7.4x** | **5.8x** | Faster inventory circulation across the ₹4 Cr budget. |
-
----
-
-## 7. Live Defense Scenario Demonstration
-
-### Assessment Test Case:
-> *"The successor to the best-selling flagship launches in 10 days and you hold 42 units across 9 stores; meanwhile one store's sales just dropped 40%."*
-
-### How to Demonstrate in the App:
-1. Navigate to **Live Defense** in the sidebar.
-2. Select **Samsung Galaxy S24 Ultra** (or Apple iPhone 15 Pro Max).
-3. Set **Days to Launch: 10 Days** and **Store Sales Contraction: -40%** at **Jayanagar Flagship**.
-4. Click **"Recalculate Allocation"**.
-5. **Observed System Actions**:
-   - EOL Risk Score immediately escalates to **Critical (92/100)**.
-   - Jayanagar inventory is trimmed from **12 units $\to$ 4 units (-8 units)**.
-   - Rural Tier-3 stores (Davangere, Hubli) clear all flagship stock to avoid 30% markdown write-offs.
-   - High-velocity tech hubs absorb the stock: **Indiranagar (+5 units)**, **Whitefield (+4 units)**, **Mangalore Forum (+2 units)**.
-   - Generates exact inter-store transfer routing with variable logistics costs (₹350–₹780/unit), saving **₹3,45,000+** in net markdown losses.
-
----
-
-## 8. Installation & Setup Guide
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v20 or later)
-- MySQL 8.0 Server running on `localhost:3306`
+- **Node.js**: v20.0.0 or higher
+- **npm**: v10.0.0 or higher
+- **MySQL Server**: 8.0+ running on `localhost:3306`
 
-### 1. Clone & Configure Environment
-Create `.env` inside `backend/`:
+---
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/Dushyanth3034/Mobi-Mart.git
+cd Mobi-Mart
+```
+
+---
+
+### Step 2: Configure Environment Variables
+
+Create `.env` inside `backend/` (or copy from `.env.example`):
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Edit `backend/.env` with your local MySQL credentials:
 
 ```env
 PORT=5000
 NODE_ENV=development
+
+# MySQL Database Connection
 DB_NAME=Mobi_Mart
 DB_USER=root
-DB_PASSWORD=your_mysql_password
+DB_PASSWORD=your_mysql_password_here
 DB_HOST=localhost
 DB_PORT=3306
+
+# Working Capital Budget Limit (₹4.00 Crore)
 INVENTORY_BUDGET=40000000
+
+# Frontend URL
 CLIENT_URL=http://localhost:5173
 ```
 
-### 2. Install Dependencies
+---
+
+### Step 3: Install Dependencies
+
+Install root, backend, and frontend dependencies in a single command:
+
 ```bash
-# Install root, backend, and frontend dependencies
 npm run install:all
 ```
 
-### 3. Seed Database
+---
+
+### Step 4: Seed the Database
+
+Run the deterministic data generator to create the database, tables, indexes, and 12-month historical records:
+
 ```bash
-# Run deterministic mock data generator
 npm run seed
 ```
 
-### 4. Start Development Servers
+---
+
+### Step 5: Start Development Servers
+
+Start both the Express backend and Vite frontend concurrently:
+
 ```bash
-# Runs backend on port 5000 and frontend on port 5173 concurrently
 npm run dev
 ```
 
-- **Frontend Application**: `http://localhost:5173`
-- **Backend Health Check**: `http://localhost:5000/api/health`
-- **Executive Summary API**: `http://localhost:5000/api/dashboard/summary`
+- **Frontend Application**: [http://localhost:5173](http://localhost:5173)
+- **Backend REST API**: [http://localhost:5000/api](http://localhost:5000/api)
+- **API Health Check**: [http://localhost:5000/api/health](http://localhost:5000/api/health)
 
 ---
 
-## 9. Verification & Acceptance Checklist
+## 📄 License & Attribution
 
-- [x] React 18 + Vite frontend with Tailwind CSS and Recharts
-- [x] Node.js + Express.js backend with 14 Sequelize relational models
-- [x] MySQL database `Mobi_Mart` connected via `.env`
-- [x] Exactly 25 Karnataka stores with distinct catchment profiles
-- [x] 70 mobile models spanning ₹6,000 to ₹1,50,000 across 5 categories
-- [x] 12 months of realistic sales history with Ugadi, Dussehra, and Diwali spikes
-- [x] Product lifecycle stages (`NEW`, `GROWING`, `PEAK`, `MATURE`, `DECLINING`, `EOL_RISK`, `EOL`)
-- [x] Rumoured vs confirmed successor handling
-- [x] ₹4.00 Crore chain-wide inventory budget enforced
-- [x] Weekly allocation optimizer with Rupee-based reasoning
-- [x] Stockout severity and lost sales calculation
-- [x] EOL Risk Engine comparing HOLD vs TRANSFER vs MARKDOWN
-- [x] Variable transfer costs (₹300–₹800/unit) and 15%–30% markdown losses
-- [x] Owner Dashboard answering "Where is my capital?", "What stock is at risk?", and 4-week financial impact
-- [x] Naive Proportional Baseline simulation and honest 5-metric benchmark
-- [x] Interactive Live Defense Scenario Simulator with Before vs After recalculation
-- [x] Clean README and `.env.example`
+Developed for the **Mirai Labs Software Developer Intern Assignment B — The Mobile Retail Chain (MobiMart)**.
+All core algorithms, relational database architectures, and UI designs are built strictly to specification.
